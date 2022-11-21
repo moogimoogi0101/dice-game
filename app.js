@@ -1,4 +1,8 @@
 // Глобал хувьсагчид
+
+// Тоглоом дууссан эсэхийг хадгалах төлөвийн хувьсагч
+var isNewGame;
+
 // var activePlayer, scores, roundScore;
 
 // Аль тоглогч шоо шидэх
@@ -17,8 +21,10 @@ var diceDom = document.querySelector(".dice");
 initGame();
 
 // Тоглоом шинээр эхлэхэд бэлдэнэ
-
 function initGame() {
+  // Тоглоом эхэллээ төлөвт оруулна
+  isNewGame = true;
+
   // --------------тоглогчийн ээлж хадгалах тоглогч 1=0 2=1
   activePlayer = 0;
   // ------------------цуглуулсан оноо хадгала
@@ -57,54 +63,64 @@ function initGame() {
 
 //шоог шидэх эвент листэнэр
 document.querySelector(".btn-roll").addEventListener("click", function () {
-  // 1-6 доторх санамсаргүй тоо
-  var diceNumber = Math.floor(Math.random() * 6) + 1;
+  if (isNewGame === true) {
+    // 1-6 доторх санамсаргүй тоо
+    var diceNumber = Math.floor(Math.random() * 6) + 1;
 
-  //   шооны зургийг веб дээр гаргаж ирнэ
-  diceDom.style.display = "block";
+    //   шооны зургийг веб дээр гаргаж ирнэ
+    diceDom.style.display = "block";
 
-  //   буусан тоод харгалзах зурнийг веб дээр гаргах
-  diceDom.src = "dice-" + diceNumber + ".png";
+    //   буусан тоод харгалзах зурнийг веб дээр гаргах
+    diceDom.src = "dice-" + diceNumber + ".png";
 
-  //   alert("Шоо буулаа: " + diceNumber);
+    //   alert("Шоо буулаа: " + diceNumber);
 
-  // буусан тоо 1-с ялгаатай бол идэвхитэй   тоглогчийн ээлжийн оноог нэмнэ
-  if (diceNumber !== 1) {
-    //  1- с ялгаатай буулхад Тоог тоглогчид нэмнэ
-    roundScore = roundScore + diceNumber;
+    // буусан тоо 1-с ялгаатай бол идэвхитэй   тоглогчийн ээлжийн оноог нэмнэ
+    if (diceNumber !== 1) {
+      //  1- с ялгаатай буулхад Тоог тоглогчид нэмнэ
+      roundScore = roundScore + diceNumber;
 
-    document.getElementById("current-" + activePlayer).textContent = roundScore;
+      document.getElementById("current-" + activePlayer).textContent =
+        roundScore;
+    } else {
+      // 1 буухад тоглогчийн ээлжийг солих
+      switchtoNextPlayer();
+    }
   } else {
-    // 1 буухад тоглогчийн ээлжийг солих
-    switchtoNextPlayer();
+    alert("GAME OVER!!! new game товч дар");
   }
 });
 
 // HOLD товчний эвент листэнэр
 document.querySelector(".btn-hold").addEventListener("click", function () {
-  // Уг тоглогчийн цуглуулсан ээлжний оноог global оноон дээр нэмнэ
-  scores[activePlayer] = scores[activePlayer] + roundScore;
+  if (isNewGame) {
+    // Уг тоглогчийн цуглуулсан ээлжний оноог global оноон дээр нэмнэ
+    scores[activePlayer] = scores[activePlayer] + roundScore;
 
-  // Дэлгэц дээр оноо өөрчилнө
-  document.getElementById("score-" + activePlayer).textContent =
-    scores[activePlayer];
+    // Дэлгэц дээр оноо өөрчилнө
+    document.getElementById("score-" + activePlayer).textContent =
+      scores[activePlayer];
 
-  //  Хожсон эсэхийг шалгах
-  if (scores[activePlayer] >= 10) {
-    // Ялагчийн нэрний оронд WINNER
-    document.getElementById("name-" + activePlayer).textContent = "WINNER";
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.remove("active");
+    //  Хожсон эсэхийг шалгах
+    if (scores[activePlayer] >= 10) {
+      // Тоглоом дууссан төлөвт оруулна
+      isNewGame = false;
+
+      // Ялагчийн нэрний оронд WINNER
+      document.getElementById("name-" + activePlayer).textContent = "WINNER!";
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.add("winner");
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.remove("active");
+    } else {
+      // Тоглогчийн ээлжийг солино
+      switchtoNextPlayer();
+    }
   } else {
-    // Тоглогчийн ээлжийг солино
-    switchtoNextPlayer();
+    alert("GAME OVER!!! new game товч дар");
   }
-
-  // Тоглогчийн ээлжийг солино
 });
 
 // Энэ функц тоглох ээлжийг дараагийн тоглогч руу шилжүүлнэ
@@ -123,7 +139,7 @@ function switchtoNextPlayer() {
   document.querySelector(".player-1-panel").classList.toggle("active");
 
   // Шоог түр алга болгоно
-  diceDom.style.display = "none";
+  diceDom.style.display = "nones";
 }
 
 // NEW GAME Шинэ тоглоом эхлүүлэх товчний эвэнт листэнэр
